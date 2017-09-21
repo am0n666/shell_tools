@@ -1,0 +1,13 @@
+	if [ -f "~/.git_main_cfg" ]
+	then
+		source "~/.git_main_cfg"
+		repo_name=$(basename "$PWD")
+		git init
+		git config user.email "$g_u_em"
+		git config user.name "$g_u_n"
+		git add *
+		git commit -m "xxx"
+		git push https://$g_u_n:$g_p@github.com/am0n666/$repo_name.git --all
+	fi
+
+
