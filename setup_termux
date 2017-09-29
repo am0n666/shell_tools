@@ -35,14 +35,14 @@ start_setup() {
 	wget https://github.com/am0n666/shell_tools/raw/master/bin.tar
 	wget https://github.com/am0n666/shell_tools/raw/master/sudo_rcfiles.tar
 
-	tar xf $WD/bin.tar -C $PREFIX/../home
+	tar xf --overwrite $WD/bin.tar -C $PREFIX/../home
 
 	if [ ! -d "$PREFIX/../home/.suroot" ]
 	then
 		mkdir "$PREFIX/../home/.suroot"
 	fi
 	
-	tar xf $WD/sudo_rcfiles.tar -C "$PREFIX/../home/.suroot"
+	tar xf --overwrite $WD/sudo_rcfiles.tar -C "$PREFIX/../home/.suroot"
 
 	rm_tars
 	chmod 0755 $PREFIX/../home/bin/*
