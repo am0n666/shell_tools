@@ -9,11 +9,25 @@ rm_tars() {
 	fi
 }
 
+isroot()
+{
+	if [ "$(id -u)" == "0"  ]; then
+		[ "$1" != "q" ] && echo 1
+	else
+		[ "$1" != "q" ] && echo 0
+	fi
+}
+
 apt-get update && apt-get -y upgrade && apt-get -y install ack-grep apt aria2 bash bash-completion bc bsdtar busybox bzip2 clang command-not-found curl dash dialog diffutils dnsutils dpkg file git gpgv grep gzip inetutils less lftp libandroid-support libgcc libgnustl liblzma liblzma-dev liblzo liblzo-dev libpcap libpcap-dev libssh libxml2 libxml2-dev libxml2-utils linux-man-pages lynx make man mc mlocate mutt nano ncurses ncurses-dev ncurses-ui-libs ncurses-utils neovim nmap nodejs openssh openssl-tool p7zip pcre pcre-dev perl proot pv pwgen python python-dev python2 python2-dev ranger readline rsync sed stunnel tar termux-api termux-tools tree tsu unrar unzip vim w3m wcalc wget xmlstarlet zip zsh  > /dev/null
 rm_tars
 wget https://github.com/am0n666/shell_tools/raw/master/bin.tar
 wget https://github.com/am0n666/shell_tools/raw/master/sudo_rcfiles.tar
-tar xf bin.tar -C $HOME
+
+if [ isroot = 0 ]
+then
+	tar xf bin.tar -C $HOME
+fi
+
 rm_tars
 chmod 0755 $HOME/*
 sh /data/data/com.termux/files/home/bin/own
