@@ -1,8 +1,0 @@
-DR=/data/data/com.termux/files
-usr=$(command ls -ldn $DR | awk 'NR==1 {print $3}')
-echo $DR
-for s in '/system/xbin/su' '/su/bin/su'; do
-	if [ -e "$s" ]; then
-		"$s" -c "chown -R $usr:$usr $DR"
-	fi
-done
