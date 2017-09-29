@@ -45,7 +45,7 @@ start_setup() {
 	tar xf $WD/sudo_rcfiles.tar -C "$PREFIX/../home/.suroot"
 
 	rm_tars
-	chmod 0755 $HOME/bin/*
+	chmod 0755 $PREFIX/../home/bin/*
 	sh /data/data/com.termux/files/home/bin/own
 	clear
 	echo "Termux setup complete,"

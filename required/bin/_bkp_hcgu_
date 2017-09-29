@@ -1,5 +1,5 @@
 HCGU_DIR=$PREFIX/../home/huuuge_casino_tool
-BKPS_DIR=/storage/5DC5-13EB/hcgu_backups
+BKPS_DIR=/$PREFIX/../home/hcgu_backups
 BKP_FILE_NAME="$(date +'%y-%m-%d_%H-%M')_hcgu_tool.tar"
 BKP_FILE_PATH="$BKPS_DIR/$BKP_FILE_NAME"
 
