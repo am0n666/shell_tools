@@ -1,11 +1,61 @@
-rm_tars() {
-	if [ -f bin.tar ]
+convert_path()
+{
+	if [ -n "$1" ]
 	then
-		rm bin.tar
+		old_path="$@"
+		old_path_wo_slash=${old_path%/}
+
+
+		case "$old_path_wo_slash" in
+		/*)
+				new_path="$old_path_wo_slash"
+				;;
+		*)
+				new_path=`pwd`/"$old_path_wo_slash"
+				;;
+		esac
+		echo $new_path
 	fi
-	if [ -f sudo_rcfiles.tar ]
+}
+
+update_files() {
+	fn=$1
+	updated_files_dir="$2"
+	target_dir="$3"
+	total=`grep -w "pattern" -c -v $fn`
+
+	for i in `eval "echo {1..$total}"`
+	do
+		f_name=`head -n $i $fn | tail -1`
+		if [ -f $target_dir/$f_name ]
+		then
+			rm $target_dir/$f_name
+		fi
+		cp -r $updated_files_dir/$f_name $target_dir/$f_name
+	done
+	return $total
+}
+
+update() {
+	WD="`pwd`"
+	updated_files_dir=$(convert_path "$1")
+	target_dir=$(convert_path "$2")
+
+	if [ ! -d "$target_dir" ]
 	then
-		rm sudo_rcfiles.tar
+		mkdir -p "$target_dir"
+	fi
+
+	ls -a "$updated_files_dir" > "$WD/file_$(basename "$updated_files_dir")"
+	update_files "$WD/file_$(basename "$updated_files_dir")" "$updated_files_dir" "$target_dir"
+	rm "$WD/file_$(basename "$updated_files_dir")"
+}
+
+rm_tars() {
+	WD="`pwd`"
+	if [ -f "$WD/required.tar" ]
+	then
+		rm "$WD/required.tar"
 	fi
 }
 
@@ -20,33 +70,42 @@ isroot()
 
 tar_req() {
 	WD="`pwd`"
+	
 	rm_tars
-	cd $WD/required
-	tar cf $WD/bin.tar bin
-	cd $WD/required/sudo_rcfiles
-	tar cf $WD/sudo_rcfiles.tar .bashrc .profile .sh_aliases
-	cd $WD
+	tar cf "$WD/required.tar" required
 }
 
 start_setup() {
 	WD="`pwd`"
+	dest_dir="$PREFIX/../home"
+
 	apt-get update && apt-get -y upgrade && apt-get -y install ack-grep apt aria2 bash bash-completion bc bsdtar busybox bzip2 clang command-not-found curl dash dialog diffutils dnsutils dpkg file git gpgv grep gzip inetutils less lftp libandroid-support libgcc libgnustl liblzma liblzma-dev liblzo liblzo-dev libpcap libpcap-dev libssh libxml2 libxml2-dev libxml2-utils linux-man-pages lynx make man mc mlocate mutt nano ncurses ncurses-dev ncurses-ui-libs ncurses-utils neovim nmap nodejs openssh openssl-tool p7zip pcre pcre-dev perl proot pv pwgen python python-dev python2 python2-dev ranger readline rsync sed stunnel tar termux-api termux-tools tree tsu unrar unzip vim w3m wcalc wget xmlstarlet zip zsh  > /dev/null
 	rm_tars
-	wget https://github.com/am0n666/shell_tools/raw/master/bin.tar
-	wget https://github.com/am0n666/shell_tools/raw/master/sudo_rcfiles.tar
+	wget https://github.com/am0n666/shell_tools/raw/master/required.tar
 
-	tar xf --overwrite $WD/bin.tar -C $PREFIX/../home
-
-	if [ ! -d "$PREFIX/../home/.suroot" ]
+	if [ -d "$WD/required" ]
 	then
-		mkdir "$PREFIX/../home/.suroot"
+		rm -Rf "$WD/required"
+	fi
+
+	tar xf $WD/required.tar -C $WD
+
+	if [ ! -d "$dest_dir/bin" ]
+	then
+		mkdir "$dest_dir/bin"
 	fi
 	
-	tar xf --overwrite $WD/sudo_rcfiles.tar -C "$PREFIX/../home/.suroot"
+	if [ ! -d "$dest_dir/.suroot" ]
+	then
+		mkdir "$dest_dir/.suroot"
+	fi
+
+	update required/bin $dest_dir/bin
+	update required/.suroot $dest_dir/.suroot
 
 	rm_tars
-	chmod 0755 $PREFIX/../home/bin/*
-	sh /data/data/com.termux/files/home/bin/own
+	chmod 0755 $dest_dir/bin/*
+	sh $dest_dir/bin/own
 	clear
 	echo "Termux setup complete,"
 	echo "please restart termux"
@@ -56,5 +115,5 @@ start_setup() {
 if [ "$#" -lt "1" ]; then
 	start_setup
 else
-	"$*"
+	"$@"
 fi
