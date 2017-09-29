@@ -18,21 +18,38 @@ isroot()
 	fi
 }
 
-apt-get update && apt-get -y upgrade && apt-get -y install ack-grep apt aria2 bash bash-completion bc bsdtar busybox bzip2 clang command-not-found curl dash dialog diffutils dnsutils dpkg file git gpgv grep gzip inetutils less lftp libandroid-support libgcc libgnustl liblzma liblzma-dev liblzo liblzo-dev libpcap libpcap-dev libssh libxml2 libxml2-dev libxml2-utils linux-man-pages lynx make man mc mlocate mutt nano ncurses ncurses-dev ncurses-ui-libs ncurses-utils neovim nmap nodejs openssh openssl-tool p7zip pcre pcre-dev perl proot pv pwgen python python-dev python2 python2-dev ranger readline rsync sed stunnel tar termux-api termux-tools tree tsu unrar unzip vim w3m wcalc wget xmlstarlet zip zsh  > /dev/null
-rm_tars
-wget https://github.com/am0n666/shell_tools/raw/master/bin.tar
-wget https://github.com/am0n666/shell_tools/raw/master/sudo_rcfiles.tar
+tar_req() {
+	WD="`pwd`"
+	rm_tars
+	cd $WD/required
+	tar cf $WD/bin.tar bin
+	cd $WD/required/sudo_rcfiles
+	tar cf $WD/sudo_rcfiles.tar .bashrc .profile .sh_aliases
+	cd $WD
+}
 
-if [ isroot = 0 ]
-then
-	tar xf bin.tar -C $HOME
+start_setup() {
+	apt-get update && apt-get -y upgrade && apt-get -y install ack-grep apt aria2 bash bash-completion bc bsdtar busybox bzip2 clang command-not-found curl dash dialog diffutils dnsutils dpkg file git gpgv grep gzip inetutils less lftp libandroid-support libgcc libgnustl liblzma liblzma-dev liblzo liblzo-dev libpcap libpcap-dev libssh libxml2 libxml2-dev libxml2-utils linux-man-pages lynx make man mc mlocate mutt nano ncurses ncurses-dev ncurses-ui-libs ncurses-utils neovim nmap nodejs openssh openssl-tool p7zip pcre pcre-dev perl proot pv pwgen python python-dev python2 python2-dev ranger readline rsync sed stunnel tar termux-api termux-tools tree tsu unrar unzip vim w3m wcalc wget xmlstarlet zip zsh  > /dev/null
+	rm_tars
+	wget https://github.com/am0n666/shell_tools/raw/master/bin.tar
+	wget https://github.com/am0n666/shell_tools/raw/master/sudo_rcfiles.tar
+
+	if [ isroot = 0 ]
+	then
+		tar xf bin.tar -C $HOME
+	fi
+
+	rm_tars
+	chmod 0755 $HOME/*
+	sh /data/data/com.termux/files/home/bin/own
+	clear
+	echo "Termux setup complete,"
+	echo "please restart termux"
+	echo
+}
+
+if [ "$#" -lt "1" ]; then
+	start_setup
+else
+	"$*"
 fi
-
-rm_tars
-chmod 0755 $HOME/*
-sh /data/data/com.termux/files/home/bin/own
-clear
-echo "Termux setup complete,"
-echo "please restart termux"
-echo
-
