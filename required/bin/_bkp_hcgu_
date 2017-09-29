@@ -13,7 +13,7 @@ fi
 
 cd $HCGU_DIR/..
 
-tar cf $BKP_FILE_PATH --exclude "tools/default_dettings" --exclude "c1" --exclude "c2" --exclude ".sett*" --exclude "chips" --exclude "*cach*" --exclude "prof*" --exclude "tmp" --exclude "hc_da*" --exclude "tmp" --exclude "c*.*" huuuge_casino_tool
+tar cf $BKP_FILE_PATH --exclude "tools/default_dettings" --exclude "c1" --exclude "c2" --exclude ".sett*" --exclude "chips" --exclude "*cach*" --exclude "prof*" --exclude "tmp" --exclude "*c_da*" --exclude "tmp" --exclude "c*.*" huuuge_casino_tool
 
 clear
 echo
